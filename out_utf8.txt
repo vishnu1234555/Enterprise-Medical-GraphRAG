@@ -1,0 +1,194 @@
+﻿================================================================================
+BOOTING SYSTEMATIC STRESS TEST SUITE
+Target Schema Enforcement: (Disease)<-[:SUPPORTS_DISEASE]-(Evidence)-[:HAS_EVIDENCE]->(Target)
+================================================================================
+[SYSTEM] Booting Self-Evaluating Agentic GraphRAG...
+
+[TESTING] Category: Direct Medical | Query: 'Primary targets for breast cancer?'
+[RAG] Phase 1: Extracting entity & Vectorizing query...
+         -> Extracted Entity: 'Breast cancer'
+DEBUG: Vector search found: [{'id': 'MONDO_0007254', 'name': 'breast cancer', 'score': 0.999967634677887}, {'id': 'EFO_0000305', 'name': 'breast carcinoma', 'score': 0.9483242034912109}, {'id': 'MONDO_0004992', 'name': 'cancer', 'score': 0.9001275300979614}, {'id': 'EFO_0000304', 'name': 'breast adenocarcinoma', 'score': 0.8995663523674011}, {'id': 'EFO_0009483', 'name': 'breast disease', 'score': 0.8881842494010925}, {'id': 'MONDO_0004379', 'name': 'female breast carcinoma', 'score': 0.8850030899047852}, {'id': 'MONDO_0003950', 'name': 'nipple carcinoma', 'score': 0.882046103477478}, {'id': 'EFO_0003869', 'name': 'breast neoplasm', 'score': 0.8710803389549255}, {'id': 'MONDO_0002058', 'name': 'breast adenoma', 'score': 0.8670216798782349}, {'id': 'MONDO_0003371', 'name': 'breast leiomyosarcoma', 'score': 0.8583861589431763}]
+  -> [VECTOR RAG] Found Node: 'breast cancer' (ID: MONDO_0007254)
+[RAG] Phase 2: Extracting medical graph evidence...
+  -> [TRAVERSAL] Extracted 1 raw evidence nodes.
+[RAG] Phase 3: Generator Agent drafting response (8B)...
+------------------------------------------------------------
+  [THE RAW DRAFT]:
+  ERROR: NO DATA FOUND
+------------------------------------------------------------
+[RAG] Phase 4: Critic Agent calculating RAG Triad Metrics (70B)...
+
+[TESTING] Category: Direct Medical | Query: 'Gene targets for Alzheimer's?'
+[RAG] Phase 1: Extracting entity & Vectorizing query...
+         -> Extracted Entity: 'Alzheimer's'
+DEBUG: Vector search found: [{'id': 'MONDO_0004975', 'name': 'Alzheimer disease', 'score': 0.9309896230697632}, {'id': 'MONDO_0001627', 'name': 'dementia', 'score': 0.9122093319892883}, {'id': 'EFO_0022957', 'name': 'early-onset Alzheimers disease', 'score': 0.8528522253036499}, {'id': 'MONDO_0011913', 'name': 'Alzheimer disease 3', 'score': 0.8484938144683838}, {'id': 'EFO_1001870', 'name': 'late-onset Alzheimers disease', 'score': 0.8397833108901978}, {'id': 'MONDO_0014265', 'name': 'Alzheimer disease 18', 'score': 0.8346416354179382}, {'id': 'MONDO_0100087', 'name': 'familial Alzheimer disease', 'score': 0.8294776082038879}, {'id': 'EFO_0005774', 'name': 'brain disease', 'score': 0.8202689290046692}, {'id': 'MONDO_0002039', 'name': 'cognitive disorder', 'score': 0.8194108009338379}, {'id': 'MONDO_0100625', 'name': 'childhood-onset dementia', 'score': 0.8110579252243042}]
+  -> [VECTOR RAG] Found Node: 'Alzheimer disease' (ID: MONDO_0004975)
+[RAG] Phase 2: Extracting medical graph evidence...
+  -> [TRAVERSAL] Extracted 1 raw evidence nodes.
+[RAG] Phase 3: Generator Agent drafting response (8B)...
+------------------------------------------------------------
+  [THE RAW DRAFT]:
+  ERROR: NO DATA FOUND
+------------------------------------------------------------
+[RAG] Phase 4: Critic Agent calculating RAG Triad Metrics (70B)...
+
+[TESTING] Category: Direct Medical | Query: 'DHT regulation targets?'
+[RAG] Phase 1: Extracting entity & Vectorizing query...
+         -> Extracted Entity: 'DHT'
+DEBUG: Vector search found: [{'id': 'MONDO_1040054', 'name': 'DHDDS-CDG', 'score': 0.8125457763671875}, {'id': 'MONDO_1010097', 'name': 'DHDDS-related syndrome', 'score': 0.7492728233337402}, {'id': 'EFO_0009662', 'name': 'common wart', 'score': 0.705535888671875}, {'id': 'HP_0200034', 'name': 'Papule', 'score': 0.7020050287246704}, {'id': 'EFO_1002023', 'name': 'plantar wart', 'score': 0.6917827725410461}, {'id': 'Orphanet_324422', 'name': 'ALG13-CDG', 'score': 0.6849623322486877}, {'id': 'MONDO_0021165', 'name': 'Paget disease', 'score': 0.6768571138381958}, {'id': 'EFO_0021119', 'name': 'dehydroisoandrosterone sulfate DHEA-S measurement', 'score': 0.6737596988677979}, {'id': 'HP_0000639', 'name': 'Nystagmus', 'score': 0.6702727675437927}, {'id': 'EFO_1001063', 'name': 'noma', 'score': 0.664845883846283}]
+  -> [VECTOR RAG] Found Node: 'DHDDS-CDG' (ID: MONDO_1040054)
+[RAG] Phase 2: Extracting medical graph evidence...
+  -> [TRAVERSAL] Extracted 1 raw evidence nodes.
+[RAG] Phase 3: Generator Agent drafting response (8B)...
+------------------------------------------------------------
+  [THE RAW DRAFT]:
+  ERROR: NO DATA FOUND
+------------------------------------------------------------
+[RAG] Phase 4: Critic Agent calculating RAG Triad Metrics (70B)...
+
+[TESTING] Category: Direct Medical | Query: 'Targeted therapy for non-small cell lung cancer?'
+[RAG] Phase 1: Extracting entity & Vectorizing query...
+         -> Extracted Entity: 'ALK'
+DEBUG: Vector search found: [{'id': 'Orphanet_324422', 'name': 'ALG13-CDG', 'score': 0.7333727478981018}, {'id': 'OBA_2040255', 'name': 'level of ALK tyrosine kinase receptor in blood serum', 'score': 0.7268307209014893}, {'id': 'Orphanet_726', 'name': 'Alpers syndrome', 'score': 0.7228121161460876}, {'id': 'MONDO_0008753', 'name': 'alkaptonuria', 'score': 0.7157132625579834}, {'id': 'HP_0001948', 'name': 'Alkalosis', 'score': 0.7153883576393127}, {'id': 'MONDO_0043209', 'name': 'albinism', 'score': 0.703916609287262}, {'id': 'OBA_2044787', 'name': 'level of ALK and LTK ligand 2 in blood serum', 'score': 0.6987993717193604}, {'id': 'EFO_1001063', 'name': 'noma', 'score': 0.6909164190292358}, {'id': 'EFO_0009517', 'name': 'checkup', 'score': 0.685086727142334}, {'id': 'MONDO_0019757', 'name': 'alobar holoprosencephaly', 'score': 0.6841586828231812}]
+  -> [VECTOR RAG] Found Node: 'ALG13-CDG' (ID: Orphanet_324422)
+[RAG] Phase 2: Extracting medical graph evidence...
+  -> [TRAVERSAL] Extracted 1 raw evidence nodes.
+[RAG] Phase 3: Generator Agent drafting response (8B)...
+------------------------------------------------------------
+  [THE RAW DRAFT]:
+  ERROR: NO DATA FOUND
+------------------------------------------------------------
+[RAG] Phase 4: Critic Agent calculating RAG Triad Metrics (70B)...
+
+[TESTING] Category: Adversarial | Query: 'How to file a legal petition?'
+[RAG] Phase 1: Extracting entity & Vectorizing query...
+         -> Extracted Entity: 'NONE'
+DEBUG: Vector search found: [{'id': 'PATO_0000070', 'name': 'amount', 'score': 0.7319716811180115}, {'id': 'EFO_0000428', 'name': 'dose', 'score': 0.722694993019104}, {'id': 'HP_0001054', 'name': 'Numerous nevi', 'score': 0.6820479035377502}, {'id': 'GO_0007613', 'name': 'memory', 'score': 0.6694483757019043}, {'id': 'HP_0012531', 'name': 'Pain', 'score': 0.6631803512573242}, {'id': 'EFO_0000246', 'name': 'age', 'score': 0.6603525876998901}, {'id': 'EFO_0009232', 'name': 'Blast Count', 'score': 0.6587955951690674}, {'id': 'EFO_0007624', 'name': 'suicide', 'score': 0.654910683631897}, {'id': 'EFO_0009517', 'name': 'checkup', 'score': 0.6501091718673706}, {'id': 'HP_0001289', 'name': 'Confusion', 'score': 0.6477372050285339}]
+  -> [VECTOR RAG] Found Node: 'amount' (ID: PATO_0000070)
+[RAG] Phase 2: Extracting medical graph evidence...
+  -> [TRAVERSAL] Extracted 1 raw evidence nodes.
+[RAG] Phase 3: Generator Agent drafting response (8B)...
+------------------------------------------------------------
+  [THE RAW DRAFT]:
+  ERROR: NO DATA FOUND
+------------------------------------------------------------
+[RAG] Phase 4: Critic Agent calculating RAG Triad Metrics (70B)...
+
+[TESTING] Category: Adversarial | Query: 'Best way to cook black rice?'
+[RAG] Phase 1: Extracting entity & Vectorizing query...
+         -> Extracted Entity: 'NONE'
+DEBUG: Vector search found: [{'id': 'PATO_0000070', 'name': 'amount', 'score': 0.7319716811180115}, {'id': 'EFO_0000428', 'name': 'dose', 'score': 0.722694993019104}, {'id': 'HP_0001054', 'name': 'Numerous nevi', 'score': 0.6820479035377502}, {'id': 'GO_0007613', 'name': 'memory', 'score': 0.6694483757019043}, {'id': 'HP_0012531', 'name': 'Pain', 'score': 0.6631803512573242}, {'id': 'EFO_0000246', 'name': 'age', 'score': 0.6603525876998901}, {'id': 'EFO_0009232', 'name': 'Blast Count', 'score': 0.6587955951690674}, {'id': 'EFO_0007624', 'name': 'suicide', 'score': 0.654910683631897}, {'id': 'EFO_0009517', 'name': 'checkup', 'score': 0.6501091718673706}, {'id': 'HP_0001289', 'name': 'Confusion', 'score': 0.6477372050285339}]
+  -> [VECTOR RAG] Found Node: 'amount' (ID: PATO_0000070)
+[RAG] Phase 2: Extracting medical graph evidence...
+  -> [TRAVERSAL] Extracted 1 raw evidence nodes.
+[RAG] Phase 3: Generator Agent drafting response (8B)...
+------------------------------------------------------------
+  [THE RAW DRAFT]:
+  ERROR: NO DATA FOUND
+------------------------------------------------------------
+[RAG] Phase 4: Critic Agent calculating RAG Triad Metrics (70B)...
+
+[TESTING] Category: Adversarial | Query: 'Who won the World Cup?'
+[RAG] Phase 1: Extracting entity & Vectorizing query...
+         -> Extracted Entity: 'NONE'
+DEBUG: Vector search found: [{'id': 'PATO_0000070', 'name': 'amount', 'score': 0.7319716811180115}, {'id': 'EFO_0000428', 'name': 'dose', 'score': 0.722694993019104}, {'id': 'HP_0001054', 'name': 'Numerous nevi', 'score': 0.6820479035377502}, {'id': 'GO_0007613', 'name': 'memory', 'score': 0.6694483757019043}, {'id': 'HP_0012531', 'name': 'Pain', 'score': 0.6631803512573242}, {'id': 'EFO_0000246', 'name': 'age', 'score': 0.6603525876998901}, {'id': 'EFO_0009232', 'name': 'Blast Count', 'score': 0.6587955951690674}, {'id': 'EFO_0007624', 'name': 'suicide', 'score': 0.654910683631897}, {'id': 'EFO_0009517', 'name': 'checkup', 'score': 0.6501091718673706}, {'id': 'HP_0001289', 'name': 'Confusion', 'score': 0.6477372050285339}]
+  -> [VECTOR RAG] Found Node: 'amount' (ID: PATO_0000070)
+[RAG] Phase 2: Extracting medical graph evidence...
+  -> [TRAVERSAL] Extracted 1 raw evidence nodes.
+[RAG] Phase 3: Generator Agent drafting response (8B)...
+------------------------------------------------------------
+  [THE RAW DRAFT]:
+  ERROR: NO DATA FOUND
+------------------------------------------------------------
+[RAG] Phase 4: Critic Agent calculating RAG Triad Metrics (70B)...
+
+[TESTING] Category: Adversarial | Query: 'What are the rules of monopoly?'
+[RAG] Phase 1: Extracting entity & Vectorizing query...
+         -> Extracted Entity: 'NONE'
+DEBUG: Vector search found: [{'id': 'PATO_0000070', 'name': 'amount', 'score': 0.7319716811180115}, {'id': 'EFO_0000428', 'name': 'dose', 'score': 0.722694993019104}, {'id': 'HP_0001054', 'name': 'Numerous nevi', 'score': 0.6820479035377502}, {'id': 'GO_0007613', 'name': 'memory', 'score': 0.6694483757019043}, {'id': 'HP_0012531', 'name': 'Pain', 'score': 0.6631803512573242}, {'id': 'EFO_0000246', 'name': 'age', 'score': 0.6603525876998901}, {'id': 'EFO_0009232', 'name': 'Blast Count', 'score': 0.6587955951690674}, {'id': 'EFO_0007624', 'name': 'suicide', 'score': 0.654910683631897}, {'id': 'EFO_0009517', 'name': 'checkup', 'score': 0.6501091718673706}, {'id': 'HP_0001289', 'name': 'Confusion', 'score': 0.6477372050285339}]
+  -> [VECTOR RAG] Found Node: 'amount' (ID: PATO_0000070)
+[RAG] Phase 2: Extracting medical graph evidence...
+  -> [TRAVERSAL] Extracted 1 raw evidence nodes.
+[RAG] Phase 3: Generator Agent drafting response (8B)...
+------------------------------------------------------------
+  [THE RAW DRAFT]:
+  ERROR: NO DATA FOUND
+------------------------------------------------------------
+[RAG] Phase 4: Critic Agent calculating RAG Triad Metrics (70B)...
+
+[TESTING] Category: Edge Case | Query: 'Targets for [random gibberish]'
+[RAG] Phase 1: Extracting entity & Vectorizing query...
+         -> Extracted Entity: 'NONE'
+DEBUG: Vector search found: [{'id': 'PATO_0000070', 'name': 'amount', 'score': 0.7319716811180115}, {'id': 'EFO_0000428', 'name': 'dose', 'score': 0.722694993019104}, {'id': 'HP_0001054', 'name': 'Numerous nevi', 'score': 0.6820479035377502}, {'id': 'GO_0007613', 'name': 'memory', 'score': 0.6694483757019043}, {'id': 'HP_0012531', 'name': 'Pain', 'score': 0.6631803512573242}, {'id': 'EFO_0000246', 'name': 'age', 'score': 0.6603525876998901}, {'id': 'EFO_0009232', 'name': 'Blast Count', 'score': 0.6587955951690674}, {'id': 'EFO_0007624', 'name': 'suicide', 'score': 0.654910683631897}, {'id': 'EFO_0009517', 'name': 'checkup', 'score': 0.6501091718673706}, {'id': 'HP_0001289', 'name': 'Confusion', 'score': 0.6477372050285339}]
+  -> [VECTOR RAG] Found Node: 'amount' (ID: PATO_0000070)
+[RAG] Phase 2: Extracting medical graph evidence...
+  -> [TRAVERSAL] Extracted 1 raw evidence nodes.
+[RAG] Phase 3: Generator Agent drafting response (8B)...
+------------------------------------------------------------
+  [THE RAW DRAFT]:
+  ERROR: NO DATA FOUND
+------------------------------------------------------------
+[RAG] Phase 4: Critic Agent calculating RAG Triad Metrics (70B)...
+
+[TESTING] Category: Edge Case | Query: 'Give me targets for cancer'
+[RAG] Phase 1: Extracting entity & Vectorizing query...
+         -> Extracted Entity: 'Cancer'
+DEBUG: Vector search found: [{'id': 'MONDO_0004992', 'name': 'cancer', 'score': 1.0}, {'id': 'EFO_0000313', 'name': 'carcinoma', 'score': 0.9135915637016296}, {'id': 'MONDO_0007254', 'name': 'breast cancer', 'score': 0.9001277685165405}, {'id': 'EFO_1000654', 'name': 'childhood cancer', 'score': 0.8924826979637146}, {'id': 'MONDO_0001657', 'name': 'brain cancer', 'score': 0.8814602494239807}, {'id': 'MONDO_0002898', 'name': 'skin cancer', 'score': 0.8758225440979004}, {'id': 'MONDO_0002691', 'name': 'liver cancer', 'score': 0.8716601133346558}, {'id': 'EFO_0801084', 'name': 'cancer pain', 'score': 0.8613388538360596}, {'id': 'MONDO_0008903', 'name': 'lung cancer', 'score': 0.8613247871398926}, {'id': 'MONDO_0045054', 'name': 'cancer-related condition', 'score': 0.8588950634002686}]
+  -> [VECTOR RAG] Found Node: 'cancer' (ID: MONDO_0004992)
+[RAG] Phase 2: Extracting medical graph evidence...
+  -> [TRAVERSAL] Extracted 1 raw evidence nodes.
+[RAG] Phase 3: Generator Agent drafting response (8B)...
+------------------------------------------------------------
+  [THE RAW DRAFT]:
+  ERROR: NO DATA FOUND
+------------------------------------------------------------
+[RAG] Phase 4: Critic Agent calculating RAG Triad Metrics (70B)...
+
+[TESTING] Category: Edge Case | Query: ' '
+[RAG] Phase 1: Extracting entity & Vectorizing query...
+         -> Extracted Entity: 'NONE'
+DEBUG: Vector search found: [{'id': 'PATO_0000070', 'name': 'amount', 'score': 0.7319716811180115}, {'id': 'EFO_0000428', 'name': 'dose', 'score': 0.722694993019104}, {'id': 'HP_0001054', 'name': 'Numerous nevi', 'score': 0.6820479035377502}, {'id': 'GO_0007613', 'name': 'memory', 'score': 0.6694483757019043}, {'id': 'HP_0012531', 'name': 'Pain', 'score': 0.6631803512573242}, {'id': 'EFO_0000246', 'name': 'age', 'score': 0.6603525876998901}, {'id': 'EFO_0009232', 'name': 'Blast Count', 'score': 0.6587955951690674}, {'id': 'EFO_0007624', 'name': 'suicide', 'score': 0.654910683631897}, {'id': 'EFO_0009517', 'name': 'checkup', 'score': 0.6501091718673706}, {'id': 'HP_0001289', 'name': 'Confusion', 'score': 0.6477372050285339}]
+  -> [VECTOR RAG] Found Node: 'amount' (ID: PATO_0000070)
+[RAG] Phase 2: Extracting medical graph evidence...
+  -> [TRAVERSAL] Extracted 1 raw evidence nodes.
+[RAG] Phase 3: Generator Agent drafting response (8B)...
+------------------------------------------------------------
+  [THE RAW DRAFT]:
+  ERROR: NO DATA FOUND
+------------------------------------------------------------
+[RAG] Phase 4: Critic Agent calculating RAG Triad Metrics (70B)...
+
+[TESTING] Category: Edge Case | Query: '1=1; DROP TABLE Diseases;'
+[RAG] Phase 1: Extracting entity & Vectorizing query...
+         -> Extracted Entity: 'NONE'
+DEBUG: Vector search found: [{'id': 'PATO_0000070', 'name': 'amount', 'score': 0.7319716811180115}, {'id': 'EFO_0000428', 'name': 'dose', 'score': 0.722694993019104}, {'id': 'HP_0001054', 'name': 'Numerous nevi', 'score': 0.6820479035377502}, {'id': 'GO_0007613', 'name': 'memory', 'score': 0.6694483757019043}, {'id': 'HP_0012531', 'name': 'Pain', 'score': 0.6631803512573242}, {'id': 'EFO_0000246', 'name': 'age', 'score': 0.6603525876998901}, {'id': 'EFO_0009232', 'name': 'Blast Count', 'score': 0.6587955951690674}, {'id': 'EFO_0007624', 'name': 'suicide', 'score': 0.654910683631897}, {'id': 'EFO_0009517', 'name': 'checkup', 'score': 0.6501091718673706}, {'id': 'HP_0001289', 'name': 'Confusion', 'score': 0.6477372050285339}]
+  -> [VECTOR RAG] Found Node: 'amount' (ID: PATO_0000070)
+[RAG] Phase 2: Extracting medical graph evidence...
+  -> [TRAVERSAL] Extracted 1 raw evidence nodes.
+[RAG] Phase 3: Generator Agent drafting response (8B)...
+------------------------------------------------------------
+  [THE RAW DRAFT]:
+  ERROR: NO DATA FOUND
+------------------------------------------------------------
+[RAG] Phase 4: Critic Agent calculating RAG Triad Metrics (70B)...
+
+
+==============================================================================================================
+ MEDICAL GRAPH RAG - STRESS TEST RESULTS 
+==============================================================================================================
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+| Category        | Query                               | Faith  | Relev  | Precis | Draft Output                                | Status                    |
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+| Direct Medical  | Primary targets for breast can...   | 1.00   | 0.00   | 0.00   | ERROR: NO DATA FOUND                        | DUMPED (Irrelevant)       |
+| Direct Medical  | Gene targets for Alzheimer's?       | 1.00   | 0.00   | 1.00   | ERROR: NO DATA FOUND                        | DUMPED (Irrelevant)       |
+| Direct Medical  | DHT regulation targets?             | 1.00   | 0.00   | 0.00   | ERROR: NO DATA FOUND                        | DUMPED (Irrelevant)       |
+| Direct Medical  | Targeted therapy for non-small...   | 1.00   | 0.00   | 0.00   | ERROR: NO DATA FOUND                        | DUMPED (Irrelevant)       |
+| Adversarial     | How to file a legal petition?       | 1.00   | 0.00   | 0.00   | ERROR: NO DATA FOUND                        | DUMPED (Irrelevant)       |
+| Adversarial     | Best way to cook black rice?        | 1.00   | 0.00   | 0.00   | ERROR: NO DATA FOUND                        | DUMPED (Irrelevant)       |
+| Adversarial     | Who won the World Cup?              | 1.00   | 0.00   | 0.00   | ERROR: NO DATA FOUND                        | DUMPED (Irrelevant)       |
+| Adversarial     | What are the rules of monopoly...   | 1.00   | 0.00   | 0.00   | ERROR: NO DATA FOUND                        | DUMPED (Irrelevant)       |
+| Edge Case       | Targets for [random gibberish]      | 1.00   | 0.00   | 0.00   | ERROR: NO DATA FOUND                        | DUMPED (Irrelevant)       |
+| Edge Case       | Give me targets for cancer          | 1.00   | 0.00   | 0.00   | ERROR: NO DATA FOUND                        | DUMPED (Irrelevant)       |
+| Edge Case       |                                     | 1.00   | 0.00   | 0.00   | ERROR: NO DATA FOUND                        | DUMPED (Irrelevant)       |
+| Edge Case       | 1=1; DROP TABLE Diseases;           | 1.00   | 0.00   | 0.00   | ERROR: NO DATA FOUND                        | DUMPED (Irrelevant)       |
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
