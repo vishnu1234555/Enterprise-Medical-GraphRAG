@@ -1,108 +1,296 @@
-import streamlit as st
+"""
+app.py
+======
+Enterprise Medical GraphRAG — Conversational Streamlit Frontend
+
+Features
+--------
+• Full persistent chat history via st.session_state
+• Agent initialised once per server session via @st.cache_resource
+• Typewriter streaming effect on every assistant response
+• Graceful error display — never crashes the UI
+"""
+
+import os
 import time
-from rag_bot import MedicalGraphRAG
+import asyncio
+from pathlib import Path
 
-# --- ADD THIS HELPER FUNCTION AT THE TOP OF app.py (under your imports) ---
-def stream_text(text):
-    """Simulates a typewriter effect for the bot 'talking back'"""
-    for word in text.split(" "):
-        yield word + " "
-        time.sleep(0.04) # Speed of the typing
+import streamlit as st
+from dotenv import load_dotenv
 
-# Configure Page
-st.set_page_config(page_title="Medical GraphRAG", page_icon="🧬", layout="wide")
+load_dotenv(Path(__file__).resolve().parent / ".env")
 
-# Custom Dark Theme & UI Tweaks
-st.markdown("""
+from src.agent.rag_bot import MedicalAgent
+from sentence_transformers import SentenceTransformer
+from src.database.neo4j_client import get_driver
+
+# ---------------------------------------------------------------------------
+# Page Configuration  (must be the FIRST Streamlit call)
+# ---------------------------------------------------------------------------
+st.set_page_config(
+    page_title="Medical GraphRAG Assistant",
+    page_icon="🧬",
+    layout="wide",
+    initial_sidebar_state="collapsed",
+)
+
+# ---------------------------------------------------------------------------
+# Custom CSS — dark clinical theme with subtle micro-animations
+# ---------------------------------------------------------------------------
+st.markdown(
+    """
     <style>
-    .stApp { background-color: #0E1117; color: #FAFAFA; }
-    .metric-box { background-color: #262730; padding: 15px; border-radius: 10px; margin-bottom: 10px; }
+    /* ── Base ── */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
+
+    .stApp {
+        background: linear-gradient(135deg, #0a0f1e 0%, #0d1b2a 50%, #0a1628 100%);
+        color: #e2e8f0;
+    }
+
+    /* ── Header ── */
+    .app-header {
+        text-align: center;
+        padding: 1.5rem 0 0.5rem 0;
+    }
+    .app-header h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        background: linear-gradient(90deg, #38bdf8, #818cf8, #c084fc);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.25rem;
+    }
+    .app-header p {
+        color: #64748b;
+        font-size: 0.9rem;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+    }
+
+    /* ── Status badge ── */
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(56, 189, 248, 0.08);
+        border: 1px solid rgba(56, 189, 248, 0.2);
+        border-radius: 999px;
+        padding: 4px 14px;
+        font-size: 0.75rem;
+        color: #38bdf8;
+        letter-spacing: 0.04em;
+        margin-bottom: 1rem;
+    }
+    .status-dot {
+        width: 7px; height: 7px;
+        border-radius: 50%;
+        background: #22c55e;
+        animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50%       { opacity: 0.3; }
+    }
+
+    /* ── Chat messages ── */
+    [data-testid="stChatMessage"] {
+        border-radius: 12px;
+        padding: 0.5rem;
+        margin-bottom: 0.4rem;
+        animation: fadeSlideIn 0.3s ease both;
+    }
+    @keyframes fadeSlideIn {
+        from { opacity: 0; transform: translateY(8px); }
+        to   { opacity: 1; transform: translateY(0);   }
+    }
+
+    /* User bubble */
+    [data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) {
+        background: rgba(129, 140, 248, 0.06);
+        border: 1px solid rgba(129, 140, 248, 0.15);
+    }
+    /* Assistant bubble */
+    [data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"]) {
+        background: rgba(56, 189, 248, 0.05);
+        border: 1px solid rgba(56, 189, 248, 0.12);
+    }
+
+    /* ── Chat input ── */
+    [data-testid="stChatInput"] textarea {
+        background: rgba(15, 23, 42, 0.8) !important;
+        border: 1px solid rgba(56, 189, 248, 0.25) !important;
+        border-radius: 12px !important;
+        color: #e2e8f0 !important;
+        transition: border-color 0.2s ease;
+    }
+    [data-testid="stChatInput"] textarea:focus {
+        border-color: rgba(56, 189, 248, 0.6) !important;
+        box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1) !important;
+    }
+
+    /* ── Divider ── */
+    .section-divider {
+        border: none;
+        border-top: 1px solid rgba(255,255,255,0.06);
+        margin: 0.75rem 0;
+    }
+
+    /* ── Sidebar ── */
+    [data-testid="stSidebar"] {
+        background: rgba(10, 15, 30, 0.95);
+        border-right: 1px solid rgba(255,255,255,0.06);
+    }
+
+    /* ── Spinner text ── */
+    .stSpinner > div > div { border-top-color: #38bdf8 !important; }
     </style>
-""", unsafe_allow_html=True)
+    """,
+    unsafe_allow_html=True,
+)
 
-st.title("🧬 Enterprise Medical GraphRAG")
-st.caption("Deterministic Clinical Extraction powered by Neo4j & Groq Llama-3 70B")
+# ---------------------------------------------------------------------------
+# Header
+# ---------------------------------------------------------------------------
+st.markdown(
+    """
+    <div class="app-header">
+        <h1>🧬 Enterprise Medical GraphRAG</h1>
+        <p>Actor-Critic Reasoning Engine · Neo4j Knowledge Graph · Groq Llama-3</p>
+    </div>
+    <div style="text-align:center;">
+        <span class="status-badge">
+            <span class="status-dot"></span>
+            SYSTEM ONLINE
+        </span>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 
-# Initialize Bot in Session State (so it doesn't reload every time)
-if "bot" not in st.session_state:
-    with st.spinner("Initializing Graph Connection..."):
-        st.session_state.bot = MedicalGraphRAG()
-        
+st.markdown('<hr class="section-divider">', unsafe_allow_html=True)
+
+# Chat transcript (must exist before any branch reads it)
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Display Chat History
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+# ---------------------------------------------------------------------------
+# Agent Initialisation — cached for the lifetime of the Streamlit server process
+# ---------------------------------------------------------------------------
+@st.cache_resource(show_spinner=False)
+def load_globals():
+    return get_driver(), SentenceTransformer("all-MiniLM-L6-v2")
 
-# --- REPLACE THE USER INPUT BLOCK WITH THIS ---
-if prompt := st.chat_input("Ask a clinical question (e.g., 'Primary targets for breast cancer?'):"):
-    # 1. Show user message
+driver, embedder = load_globals()
+
+@st.cache_resource(show_spinner=False)
+def get_agent(_conn_signature: str) -> MedicalAgent:
+    """Recreate agent when Neo4j connection env changes (cached driver otherwise)."""
+    return MedicalAgent(driver=driver, embedder=embedder)
+
+
+with st.spinner("🔗 Connecting to Neo4j graph & loading models…"):
+    _sig = f"{os.getenv('NEO4J_URI', '')}|{os.getenv('NEO4J_USER', '')}|{os.getenv('NEO4J_DATABASE', '')}"
+    agent = get_agent(_sig)
+
+# ---------------------------------------------------------------------------
+# Sidebar — session controls & info
+# ---------------------------------------------------------------------------
+with st.sidebar:
+    st.markdown("### ⚙️ Session Controls")
+    if st.button("🗑️ Clear Conversation", use_container_width=True):
+        st.session_state.messages = []
+        st.rerun()
+
+    if st.button("🔌 Reconnect Neo4j (reload agent)", use_container_width=True):
+        # Drops cached MedicalAgent / driver so code + .env changes take effect
+        st.cache_resource.clear()
+        st.rerun()
+
+    st.markdown("---")
+    st.markdown("### 📋 Architecture")
+    st.markdown(
+        """
+        **Pipeline steps:**
+        1. 🔍 Semantic vector search (Neo4j)
+        2. 🕸️ Deterministic graph traversal
+        3. ✍️ Actor LLM — retrieve & explain targets
+        4. ✅ Validated response → UI
+        """
+    )
+
+
+
+# ---------------------------------------------------------------------------
+# Chat State Initialisation (welcome message on first load)
+# ---------------------------------------------------------------------------
+
+# Welcome message — shown only once at the start of a new session
+if not st.session_state.messages:
+    st.session_state.messages.append(
+        {
+            "role": "assistant",
+            "content": (
+                "👋 Welcome to the **Enterprise Medical GraphRAG Assistant**.\n\n"
+                "I'm connected to a Neo4j biomedical knowledge graph and powered "
+                "by an **Actor-Critic reasoning engine** that retrieves graph facts, "
+                "drafts an answer, and then fact-checks it against the raw database "
+                "context before responding — minimising hallucination.\n\n"
+                "Ask me anything about disease targets, gene associations, or "
+                "clinical evidence. *What would you like to explore?*"
+            ),
+        }
+    )
+
+# ---------------------------------------------------------------------------
+# Render Conversation History
+# ---------------------------------------------------------------------------
+for msg in st.session_state.messages:
+    with st.chat_message(msg["role"]):
+        st.markdown(msg["content"])
+
+# ---------------------------------------------------------------------------
+# Typewriter Streaming Helper
+# ---------------------------------------------------------------------------
+def stream_text(text: str, delay: float = 0.018):
+    """Yields words one by one for a typewriter effect."""
+    for word in text.split(" "):
+        yield word + " "
+        time.sleep(delay)
+
+
+
+# ---------------------------------------------------------------------------
+# Main Chat Input
+# ---------------------------------------------------------------------------
+if prompt := st.chat_input("Ask a clinical question — e.g. 'Primary targets for breast cancer?'"):
+
+    chat_history = list(st.session_state.messages)
+
+    # 1. Display user message immediately
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    # 2. Bot "Talking Back"
+    # 2. Run the Actor-Critic backend pipeline
     with st.chat_message("assistant"):
-        # We use a status container so the backend thinking doesn't clutter the final chat
-        with st.status("🧠 Searching 3.8M Node Medical Graph...", expanded=True) as status:
+        with st.spinner("🔍 Retrieving graph context & running Critic validation…"):
             try:
-                st.write("Phase 1: Semantic Vector Search...")
-                d_id, d_name, entity = st.session_state.bot.semantic_vector_search(prompt)
-                
-                if not d_id:
-                    status.update(label="Query Rejected", state="error", expanded=False)
-                    final_response = "I couldn't find any relevant medical entities for that query in my graph. I only extract targeted clinical evidence."
-                    st.write_stream(stream_text(final_response))
-                    st.session_state.messages.append({"role": "assistant", "content": final_response})
-                    st.stop()
+                final_response = asyncio.run(agent.execute_query(prompt, chat_history=chat_history))
+            except Exception as exc:
+                final_response = (
+                    f"⚠️ **Unexpected error:** `{type(exc).__name__}: {exc}`\n\n"
+                    "Please check the server logs and retry."
+                )
 
-                st.write(f"Phase 2: Extracting topological evidence for {d_name}...")
-                context = st.session_state.bot.deterministic_traversal(d_id)
-                
-                if not context:
-                    status.update(label="No Evidence Found", state="error", expanded=False)
-                    final_response = f"I found the disease '{d_name}', but there are zero clinical evidence links attached to it in the database."
-                    st.write_stream(stream_text(final_response))
-                    st.session_state.messages.append({"role": "assistant", "content": final_response})
-                    st.stop()
-
-                st.write("Phase 3: Generator Agent drafting response...")
-                draft = st.session_state.bot.generate_draft_response(prompt, context)
-                
-                st.write("Phase 4: 70B Critic auditing RAG Triad...")
-                metrics = st.session_state.bot.evaluate_rag_triad(prompt, draft, context)
-                
-                f_val = float(metrics.get('faithfulness', 0.0))
-                if f_val < 1.0:
-                    status.update(label="Hallucination Blocked", state="error", expanded=False)
-                    final_response = "My Critic Agent detected a hallucination in the draft. I have discarded the response for your safety."
-                    st.write_stream(stream_text(final_response))
-                    st.session_state.messages.append({"role": "assistant", "content": final_response})
-                    st.stop()
-
-                # If everything passes, collapse the status window
-                status.update(label=f"Validated Evidence Extracted for: {d_name}", state="complete", expanded=False)
-                
-                # THIS IS WHERE IT "TALKS BACK"
-                final_response = draft
-                
-                # Render the telemetry sidebar
-                with st.sidebar:
-                    st.subheader("Last Query Telemetry")
-                    st.markdown(f"**Entity Matched:** `{d_name}`")
-                    st.metric(label="Faithfulness", value=f"{float(metrics.get('faithfulness', 0)):.2f}")
-                    st.metric(label="Relevance", value=f"{float(metrics.get('answer_relevance', 0)):.2f}")
-                    st.metric(label="Precision", value=f"{float(metrics.get('context_precision', 0)):.2f}")
-
-            except Exception as e:
-                status.update(label="Pipeline Crash", state="error", expanded=False)
-                final_response = f"A critical error occurred: {str(e)}"
-                st.write_stream(stream_text(final_response))
-                st.session_state.messages.append({"role": "assistant", "content": final_response})
-                st.stop()
-
-        # After the status window collapses, stream the text into the chat bubble
+        # 3. Stream the validated answer
         st.write_stream(stream_text(final_response))
-        st.session_state.messages.append({"role": "assistant", "content": final_response})
+
+    # 4. Persist to session state
+    st.session_state.messages.append(
+        {"role": "assistant", "content": final_response}
+    )

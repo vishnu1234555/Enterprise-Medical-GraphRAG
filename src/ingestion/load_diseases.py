@@ -1,13 +1,12 @@
 import glob
 
 import pandas as pd
-from neo4j import GraphDatabase
 
-URI = "bolt://127.0.0.1:7687"
-AUTH = ("neo4j", "12345678")
-driver = GraphDatabase.driver(URI, auth=AUTH)
+from src.database.neo4j_client import get_driver, session_kwargs
 
-disease_files = glob.glob("D:/LAW MOCK/data/diseases/*.parquet")
+driver = get_driver()
+
+disease_files = glob.glob("data/diseases/*.parquet")
 
 
 def patch_disease_names():
@@ -15,7 +14,7 @@ def patch_disease_names():
         print("[FATAL] Could not find the 'diseases' folder. Check your path.")
         return
 
-    with driver.session() as session:
+    with driver.session(**session_kwargs()) as session:
         for file in disease_files:
             print(f"Reading dictionary: {file}...")
             df = pd.read_parquet(file, columns=["id", "name"])

@@ -1,7 +1,28 @@
+# Environments
 .env
-__pycache__/
-data/
+.venv
+env/
 venv/
-.DS_Store
+ENV/
+env.bak/
+venv.bak/
+
+# Data and Databases
+data/
+*.parquet
 *.csv
-*.jsonl
+*.db
+neo4j_data/
+
+# Python Caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# IDEs
+.vscode/
+.cursor/
+.idea/
+*.swp
+*.swo

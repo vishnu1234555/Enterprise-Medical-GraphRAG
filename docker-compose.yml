@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  medical-graphrag:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: enterprise-medical-rag
+    ports:
+      - "8501:8501"
+    env_file:
+      - .env
+    depends_on:
+      - neo4j
+    # The below setting allows the container to resolve 'host.docker.internal'
+    # to communicate with a local Neo4j instance running on your host machine.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    # Enable WSL2 NVIDIA GPU passthrough
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+
+  neo4j:
+    image: neo4j:5.15.0
+    container_name: legal_graph_neo4j
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    environment:
+      - NEO4J_AUTH=${NEO4J_USER:-neo4j}/${NEO4J_PASSWORD:-12345678}
+      - NEO4J_PLUGINS=["apoc"]
+      - NEO4J_apoc_export_file_enabled=true
+      - NEO4J_apoc_import_file_enabled=true
+      - NEO4J_apoc_import_file_use__neo4j__config=true
+    volumes:
+      - neo4j_data:/data
+
+volumes:
+  neo4j_data:

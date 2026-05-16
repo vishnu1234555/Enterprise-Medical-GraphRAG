@@ -1,9 +1,20 @@
 import logging
 import os
-from typing import Iterable, List, Tuple
+from pathlib import Path
+from typing import List, Tuple
 
-from neo4j import GraphDatabase
+from dotenv import load_dotenv
 from sentence_transformers import SentenceTransformer
+
+from src.database.neo4j_client import get_driver
+from src.ingestion.neo4j_embedding_io import (
+    chunked,
+    create_vector_index,
+    fetch_unembedded_diseases,
+    write_embeddings,
+)
+
+load_dotenv(Path(__file__).resolve().parents[2] / ".env")
 
 logging.basicConfig(
     level=logging.INFO,
@@ -11,67 +22,19 @@ logging.basicConfig(
 )
 logger = logging.getLogger("vectorize")
 
-NEO4J_URI = os.getenv("NEO4J_URI", "bolt://127.0.0.1:7687")
-NEO4J_USER = os.getenv("NEO4J_USER", "neo4j")
-NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD", "12345678")
 MODEL_NAME = os.getenv("EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2")
-INDEX_NAME = "disease_name_embeddings"
-VECTOR_DIMENSIONS = 384
 BATCH_SIZE = int(os.getenv("BATCH_SIZE", "100"))
 
 
-def chunked(items: List[Tuple[str, str]], size: int) -> Iterable[List[Tuple[str, str]]]:
-    for i in range(0, len(items), size):
-        yield items[i : i + size]
-
-
-def create_vector_index(driver) -> None:
-    query = f"""
-    CREATE VECTOR INDEX {INDEX_NAME} IF NOT EXISTS
-    FOR (d:Disease) ON (d.embedding)
-    OPTIONS {{
-      indexConfig: {{
-        `vector.dimensions`: {VECTOR_DIMENSIONS},
-        `vector.similarity_function`: 'cosine'
-      }}
-    }}
-    """
-    with driver.session() as session:
-        session.run(query).consume()
-    logger.info("Ensured vector index exists: %s", INDEX_NAME)
-
-
-def fetch_unembedded_diseases(driver) -> List[Tuple[str, str]]:
-    query = """
-    MATCH (d:Disease)
-    WHERE d.embedding IS NULL
-    RETURN d.id AS id, d.name AS name
-    """
-    with driver.session() as session:
-        result = session.run(query)
-        rows = [(record["id"], record["name"]) for record in result if record["name"]]
-    logger.info("Fetched %d Disease nodes without embeddings", len(rows))
-    return rows
-
-
-def write_embeddings(driver, rows: List[dict]) -> None:
-    query = """
-    UNWIND $rows AS row
-    MATCH (d:Disease {id: row.id})
-    SET d.embedding = row.embedding
-    """
-    with driver.session() as session:
-        session.run(query, rows=rows).consume()
-
-
 def main() -> None:
-    logger.info("Loading model: %s on CPU", MODEL_NAME)
-    model = SentenceTransformer(MODEL_NAME, device="cpu")
-    driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
+    device = os.getenv("EMBEDDING_DEVICE", "cpu")
+    logger.info("Loading model: %s on %s", MODEL_NAME, device)
+    model = SentenceTransformer(MODEL_NAME, device=device)
+    driver = get_driver()
 
     try:
         create_vector_index(driver)
-        diseases = fetch_unembedded_diseases(driver)
+        diseases: List[Tuple[str, str]] = fetch_unembedded_diseases(driver)
         if not diseases:
             logger.info("No Disease nodes require embedding. Exiting.")
             return
@@ -81,9 +44,10 @@ def main() -> None:
             ids = [item[0] for item in batch]
             names = [item[1] for item in batch]
 
+            encode_bs = min(64, max(8, BATCH_SIZE))
             embeddings = model.encode(
                 names,
-                batch_size=16,
+                batch_size=encode_bs,
                 convert_to_numpy=True,
                 normalize_embeddings=True,
                 show_progress_bar=False,
