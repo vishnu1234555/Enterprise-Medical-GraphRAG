@@ -15,10 +15,10 @@ This system was engineered to run efficiently under strict hardware constraints,
 
 ## 🛠️ Tech Stack
 
-* **Backend:** Python 3.10+, FastAPI (Underlying agent logic)
+* **Backend Logic:** Pure Python 3.10+ (`asyncio`, `tenacity`)
 * **Knowledge Graph:** Neo4j (Cypher, Vector Indexes)
 * **LLM Engine:** Groq API (Llama-3.3-70B-Versatile)
-* **Embeddings:** SentenceTransformers
+* **Embeddings:** SentenceTransformers (`all-MiniLM-L6-v2`)
 * **Frontend:** Streamlit (Persistent chat state, typewriter streaming)
 
 ## 🗄️ Ingestion Pipeline (Hardware-Aware)
