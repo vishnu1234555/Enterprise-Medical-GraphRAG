@@ -9,7 +9,7 @@ This architecture leverages a highly optimized Retrieval-Augmented Generation (R
 This system was engineered to run efficiently under strict hardware constraints, offloading heavy vector computation and implementing dynamic API interceptors.
 
 * **Hybrid Retrieval Engine:** Combines dense vector search (`all-MiniLM-L6-v2`) for semantic disease matching with deterministic Cypher graph traversals to extract hard clinical evidence.
-* **Anti-Hallucination Constraints:** Strict XML bounding forces the Llama-3 70B model to separate its internal medical knowledge (disease overviews) from graph-grounded reality (validated targets).
+* **Anti-Hallucination Constraints:** Strict XML bounding forces the Llama-3 model to separate its internal medical knowledge (disease overviews) from graph-grounded reality (validated targets).
 * **Live API Interceptor:** Bypasses local database bloat by intercepting raw `CHEMBL` IDs and dynamically pinging the EBI (European Bioinformatics Institute) API to translate them into human-readable biological targets in milliseconds.
 * **Asynchronous Processing:** Built with `asyncio` and `AsyncGroq` for high-concurrency request handling, dropping latency by eliminating sequential blocking.
 
@@ -17,7 +17,7 @@ This system was engineered to run efficiently under strict hardware constraints,
 
 * **Backend Logic:** Pure Python 3.10+ (`asyncio`, `tenacity`)
 * **Knowledge Graph:** Neo4j (Cypher, Vector Indexes)
-* **LLM Engine:** Groq API (Llama-3.3-70B-Versatile)
+* **LLM Engine:** Groq API (Llama-3 Series)
 * **Embeddings:** SentenceTransformers (`all-MiniLM-L6-v2`)
 * **Frontend:** Streamlit (Persistent chat state, typewriter streaming)
 
