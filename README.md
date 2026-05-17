@@ -50,3 +50,18 @@ To handle 30,000+ biological targets without bottlenecking local CPU threads, th
    ```bash
    streamlit run app.py
    ```
+
+### 🐳 Docker Deployment (Recommended)
+For a fully containerized, isolated deployment:
+
+1. Ensure your `.env` file is properly configured in the root directory.
+2. Build and spin up the container stack in detached mode:
+   ```bash
+   docker-compose up --build -d
+   ```
+
+To monitor the live application logs:
+
+```bash
+docker-compose logs -f
+```
